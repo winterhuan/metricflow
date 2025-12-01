@@ -106,6 +106,16 @@ MF_DATABRICKS_KEYS = (
     ConfigKey(key=CONFIG_DWH_DIALECT, value=SqlDialect.DATABRICKS.value),
 )
 
+# Spark Thrift config keys
+MF_SPARK_THRIFT_KEYS = (
+    ConfigKey(key=CONFIG_DWH_HOST, comment="Spark Thrift Server host"),
+    ConfigKey(key=CONFIG_DWH_PORT, comment="Spark Thrift Server port (default: 10000)"),
+    ConfigKey(key=CONFIG_DWH_USER, comment="Username for Spark Thrift Server"),
+    ConfigKey(key=CONFIG_DWH_PASSWORD, comment="Password for Spark Thrift Server"),
+    ConfigKey(key=CONFIG_DWH_DB, comment="Default database to use"),
+    ConfigKey(key=CONFIG_DWH_DIALECT, value=SqlDialect.SPARK_THRIFT.value),
+)
+
 
 def generate_duckdb_demo_keys(config_dir: str) -> Tuple[ConfigKey, ...]:
     """Generate configuration keys for DuckDB with a file in the config_dir."""

@@ -67,9 +67,12 @@ def make_sql_client(url: str, password: str) -> AsyncSqlClient:
         return MySQLSqlClient.from_connection_details(url, password)
     elif dialect == SqlDialect.SQLITE:
         return SqliteSqlClient.from_connection_details(url, password)
+    elif dialect == SqlDialect.SPARK_THRIFT:
+        from metricflow.sql_clients.spark_thrift import SparkThriftSqlClient
+        return SparkThriftSqlClient.from_connection_details(url, password)
     else:
         raise ValueError(
-            f"Only DuckDB, MySQL, and SQLite dialects are supported in this build. Got: `{dialect}` in URL {url}"
+            f"Only DuckDB, MySQL, SQLite, and Spark Thrift dialects are supported in this build. Got: `{dialect}` in URL {url}"
         )
 
 
@@ -95,9 +98,26 @@ def make_sql_client_from_config(handler: YamlFileHandler) -> AsyncSqlClient:
     elif dialect == SqlDialect.SQLITE.value:
         database = not_empty(handler.get_value(CONFIG_DWH_DB), CONFIG_DWH_DB, url)
         return SqliteSqlClient(file_path=database)
+    elif dialect == SqlDialect.SPARK_THRIFT.value:
+        # For Spark Thrift, construct client from config components
+        host = not_empty(handler.get_value(CONFIG_DWH_HOST), "host", url)
+        port = int(not_empty(handler.get_value(CONFIG_DWH_PORT), "port", url))
+        username = not_empty(handler.get_value(CONFIG_DWH_USER), "username", url)
+        password = not_empty(handler.get_value(CONFIG_DWH_PASSWORD), "password", url)
+        database = not_empty(handler.get_value(CONFIG_DWH_DB), "database", url)
+
+        # Import and return SparkThriftSqlClient
+        from metricflow.sql_clients.spark_thrift import SparkThriftSqlClient
+        return SparkThriftSqlClient(
+            host=host,
+            port=port,
+            username=username,
+            password=password,
+            database=database,
+        )
     else:
         raise ValueError(
-            f"Only DuckDB, MySQL, and SQLite dialects are supported in this build. Got dialect '{dialect}' in {url}"
+            f"Only DuckDB, MySQL, SQLite, and Spark Thrift dialects are supported in this build. Got dialect '{dialect}' in {url}"
         )
 
 

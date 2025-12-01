@@ -56,6 +56,7 @@ update-checker = "^0.18.0"
 rudder-sdk-python = "^1.0.3"
 duckdb-engine = "^0.17.0"
 duckdb = "1.3.0"
+pyhive = {version = ">=0.7.0", extras = ["hive_pure_sasl"]}
 yamllint = "^1.26.3"
 click = ">=7.1.2"
 GitPython = "^3.1.27"

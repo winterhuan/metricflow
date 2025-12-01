@@ -135,6 +135,9 @@ class DatusConfigHandler(YamlFileHandler):
         # Construct semantic models path: {datus_home}/semantic_models/{namespace}
         model_path = datus_home / "semantic_models" / self.namespace
 
+        # Create directory if it doesn't exist
+        model_path.mkdir(parents=True, exist_ok=True)
+
         return str(model_path)
 
     def get_value(self, key: str) -> Optional[str]:
@@ -162,6 +165,7 @@ class DatusConfigHandler(YamlFileHandler):
                 "sqlite": "sqlite",
                 "snowflake": "snowflake",
                 "bigquery": "bigquery",
+                "spark_thrift": "spark_thrift",
             }
             return dialect_mapping.get(db_type, db_type)
 
@@ -199,8 +203,8 @@ class DatusConfigHandler(YamlFileHandler):
                 return "main"
             elif db_type in ("sqlite", "mysql"):
                 return "default"
-            elif db_type == "starrocks":
-                # For StarRocks, use database as schema since it doesn't have schema concept
+            elif db_type in ("starrocks", "spark_thrift"):
+                # For StarRocks and Spark, use database as schema since they don't have schema concept
                 return self._resolve_env_vars(self.db_config.get("database", ""))
             else:
                 return self._resolve_env_vars(self.db_config.get("schema", ""))

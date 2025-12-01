@@ -15,6 +15,7 @@ class SqlDialect(ExtendedEnum):
     BIGQUERY = "bigquery"
     DATABRICKS = "databricks"
     SQLITE = "sqlite"
+    SPARK_THRIFT = "spark_thrift"
 
 
 T = TypeVar("T")
